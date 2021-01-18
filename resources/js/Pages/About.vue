@@ -6,7 +6,14 @@
 
 <script>
 export default {
-name: "about"
+    name: "about",
+    data() {
+        return {
+            test: 1
+        };
+    },
+    created() {
+    },
 }
 </script>
 

@@ -18,7 +18,7 @@ export default {
     name: "home",
     computed: {
         ...mapState({
-            count: state => state.count
+            count: state => state.count,
         }),
     }
 }

@@ -1,62 +1,85 @@
 <template>
-    <div class="main">
-        <div class="container">
-            <div class="signup-content">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h1>Login</h1>
-<!--                        <message v-if="error" type="danger">{{ error }}</message>-->
-                        <form @submit.prevent="submit">
-                            <div class="form-group">
-                                <label for="email-field">Email address</label>
-                                <input type="email" class="form-control" id="email-field" placeholder="Enter email"
-                                       v-model="email"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="password-field">Password</label>
-                                <input type="password" class="form-control" id="password-field" placeholder="Password"
-                                       v-model="password"/>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div>
+        <b-form @submit.prevent="onSubmit" @reset="onReset" v-if="show">
+            <b-form-group
+                id="input-group-1"
+                label="Email:"
+                label-for="input-1"
+                description="We'll never share your email with anyone else."
+            >
+                <b-form-input
+                    id="input-1"
+                    v-model="form.email"
+                    type="email"
+                    placeholder="Enter email"
+                    required
+                ></b-form-input>
+            </b-form-group>
+
+            <b-form-group id="input-group-2" label="Password:" label-for="input-2">
+                <b-form-input
+                    id="input-2"
+                    type="password"
+                    v-model="form.password"
+                    placeholder="Password"
+                    required
+                ></b-form-input>
+            </b-form-group>
+
+            <b-button type="submit" variant="primary">Submit</b-button>
+            <b-button type="reset" variant="danger">Reset</b-button>
+        </b-form>
+        <b-card class="mt-3" header="Form Data Result">
+            <pre class="m-0">{{ form }}</pre>
+        </b-card>
     </div>
 </template>
 
 <script>
+import {authService} from '../Services';
+
 export default {
-    name: "Login",
+    name: "login",
     data() {
         return {
-            email: null,
-            password: null,
-            error: false
+            form: {
+                email: '',
+                password: '',
+            },
+            show: true,
+            submitted: false
         }
     },
+    created() {
+        authService.logout();
+        this.returnUrl = this.$route.query.returnUrl || '/';
+    },
+
     methods: {
-        login() {
-            var app = this
-            this.$auth.login({
-                params: {
-                    email: app.email,
-                    password: app.password
-                },
-                success: function () {
-                },
-                error: function () {
-                },
-                rememberMe: true,
-                redirect: '/profile',
-                fetchUser: true,
-            });
+        onSubmit(event) {
+            event.preventDefault()
+            this.submitted = true;
+            const {email, password} = this.form;
+            authService.login(email, password)
+                .then(user => {
+                        this.$router.push(this.returnUrl)
+                    },
+                error => {
+                    this.error = error;
+                    this.loading = false;
+                }
+            );
         },
+
+        onReset(event) {
+            event.preventDefault()
+            this.form.email = ''
+            this.form.password = ''
+            this.show = false
+            this.$nextTick(() => {
+                this.show = true
+            })
+        }
     }
 }
 </script>
-
-<style scoped>
-
-</style>
