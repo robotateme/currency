@@ -28,7 +28,7 @@ class UpdateVkGroupDescription
             }
         }
         $vkClient = new Client();
-        $result = $vkClient->groups()->edit([
+        $vkClient->groups()->edit([
             'group_id' => 0,
             'description' => $str
         ]);
