@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
         "bmatovu/laravel-xml": "^3.0",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
@@ -17,7 +19,9 @@
         "laravel/telescope": "^4.4",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
-        "sfelix-martins/json-exception-handler": "^2.3"
+        "sfelix-martins/json-exception-handler": "^2.3",
+        "vkcom/vk-php-sdk": "^5.101",
+      "ext-json": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.9",

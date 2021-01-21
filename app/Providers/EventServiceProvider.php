@@ -23,7 +23,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         CurrencyRatesUpdated::class => [
             NotifyUsers::class,
-//            UpdateVkGroupDescription::class
+            UpdateVkGroupDescription::class
         ],
     ];
 

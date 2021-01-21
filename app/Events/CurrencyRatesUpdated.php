@@ -2,11 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
+use App\Models\Currency;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -14,25 +11,18 @@ class CurrencyRatesUpdated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $rateValue;
+    /**
+     * @var Currency[]
+     */
+    public $currencies;
 
     /**
      * Create a new event instance.
      *
-     * @param float $rateValue
+     * @param Currency[] $currencies
      */
-    public function __construct(float $rateValue)
+    public function __construct(array $currencies)
     {
-        $this->rateValue = $rateValue;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('rate-updated');
+        $this->currencies = $currencies;
     }
 }

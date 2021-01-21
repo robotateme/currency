@@ -13,6 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         \App\Models\User::factory(100000)->create();
+        try {
+            \App\Models\User::factory(1000)->create();
+        } catch (\PDOException $exception) {
+            if ($exception->getCode() != 23000) {
+                throw $exception;
+            }
+        }
     }
 }

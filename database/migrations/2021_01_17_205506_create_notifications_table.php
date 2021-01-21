@@ -17,7 +17,6 @@ class CreateNotificationsTable extends Migration
             $table->id();
             $table->foreignId('user_id')
                 ->constrained('users');
-            $table->index('user_id', 'user_idx');
             $table->text('message');
             $table->timestamps();
         });

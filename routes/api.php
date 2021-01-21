@@ -14,7 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/currency/{date}', [\App\Http\Controllers\CurrencyController::class, 'daily']);
+Route::get('/currencies', [\App\Http\Controllers\CurrencyController::class, 'all']);
 
-Route::middleware('auth.basic')->get('/profile', function (Request $request) {
-    return $request->user();
+Route::post('/profile', [\App\Http\Controllers\CurrencyController::class, 'daily']);
+Route::group(['middleware' => 'auth.basic'], function () {
+    Route::post('/posts', [\App\Http\Controllers\PostsController::class, 'index']);
+    Route::get('/notifications', [\App\Http\Controllers\NotificationsController::class, 'index']);
+    Route::get('/profile', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'avatarUpdate']);
 });
+

@@ -3,9 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Events\CurrencyRatesUpdated;
-use App\Jobs\TestJob;
-use App\Listeners\NotifyUsers;
+use App\Models\Currency;
+use App\Models\Dto\CurrencyDto;
+use App\Services\CbrApi\RatesDailyRatesRequest;
+use Carbon\Carbon;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
+use \Exception;
 
 class CronCbrRequest extends Command
 {
@@ -36,11 +40,43 @@ class CronCbrRequest extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @return void
+     * @throws Exception
      */
     public function handle()
     {
+        /**
+         * @var CurrencyDto[] $data
+         */
+        $cbrClient = new RatesDailyRatesRequest();
+        if (Currency::whereDate('created_at', '=', Carbon::now())->exists()):
+            dump("Contact tomorrow!");
+            return;
+        endif;
 
-//        event(new CurrencyRatesUpdated(10.3));
+        try {
+            $cbrClient->setDate(Carbon::now())
+                ->makeRequest('GET');
+
+            $currencies = [];
+
+            foreach ($cbrClient->getResult() as $row) {
+                $currency = new Currency();
+                $currency->fill(
+                    CurrencyDto::fromCbr($row)->all()
+                )
+                    ->save();
+                $currencies[] = $currency;
+            }
+            event(new CurrencyRatesUpdated($currencies));
+        } catch (GuzzleException $e) {
+            \Log::error('CBR Cron HTTP Error:', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'source' => 'cron'
+            ]);
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }

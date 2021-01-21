@@ -4,10 +4,15 @@
 namespace App\Http\Controllers;
 
 
-class NotificationsController
+use App\Http\Resources\NotificationResource;
+use App\Models\Notification;
+
+class NotificationsController extends Controller
 {
     public function index()
     {
-        return [];
+        return NotificationResource::collection(
+            Notification::paginate()
+        );
     }
 }

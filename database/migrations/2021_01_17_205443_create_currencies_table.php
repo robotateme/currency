@@ -16,8 +16,11 @@ class CreateCurrenciesTable extends Migration
         Schema::create('currencies', function (Blueprint $table) {
             $table->id();
             $table->string('rate');
+            $table->date('date');
             $table->string('iso_code');
             $table->timestamps();
+            $table->index(['date', 'iso_code'], 'currencies_date_rate_idx');
+            $table->index(['iso_code', 'rate'], 'currencies_iso_code_rate_idx');
         });
     }
 

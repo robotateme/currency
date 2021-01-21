@@ -16,7 +16,7 @@ class AlterTableNotificationsAddType extends Migration
         Schema::table('notifications', function(Blueprint $table) {
             $table->string('type')
                 ->default('default');
-            $table->index(['type', 'created_at'],'notification_type_idx');
+            $table->index(['type', 'created_at'],'notification_type_created_at_idx');
         });
     }
 
