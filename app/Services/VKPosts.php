@@ -12,16 +12,27 @@ use GuzzleHttp\Exception\GuzzleException;
 class VKPosts
 {
     /**
-     * @throws GuzzleException
+     * @var VkApiClient
+     */
+    private $vkClient;
+
+    public function __construct(VkApiClient $vkClient)
+    {
+        $this->vkClient = $vkClient;
+    }
+
+    /**
+     * @return array
      * @throws Exception
+     * @throws GuzzleException
      */
     public function getAll()
     {
-        $vkClient = new VkApiClient();
         try {
-            $result = $vkClient->wall()->get([
-                'owner_id' => 1, //Должен быть отрицательным для группы
-            ]);
+            $result = $this->vkClient
+                ->wall()->get([
+                    'owner_id' => 1, //Должен быть отрицательным для группы
+                ]);
         } catch (Exception $e) {
             throw $e;
         }
