@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
 use \Exception;
+use Log;
 
 class CronCbrRequest extends Command
 {
@@ -26,14 +27,19 @@ class CronCbrRequest extends Command
      * @var string
      */
     protected $description = 'Cron for fetch currency rates';
+    /**
+     * @var RatesDailyRatesRequest
+     */
+    protected $cbrClient;
 
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param RatesDailyRatesRequest $cbrClient
      */
-    public function __construct()
+    public function __construct(RatesDailyRatesRequest $cbrClient)
     {
+        $this->cbrClient = $cbrClient;
         parent::__construct();
     }
 
@@ -48,19 +54,18 @@ class CronCbrRequest extends Command
         /**
          * @var CurrencyDto[] $data
          */
-        $cbrClient = new RatesDailyRatesRequest();
         if (Currency::whereDate('created_at', '=', Carbon::now())->exists()):
             dump("Contact tomorrow!");
             return;
         endif;
 
         try {
-            $cbrClient->setDate(Carbon::now())
+            $this->cbrClient->setDate(Carbon::now())
                 ->makeRequest('GET');
 
             $currencies = [];
 
-            foreach ($cbrClient->getResult() as $row) {
+            foreach ($this->cbrClient->getResult() as $row) {
                 $currency = new Currency();
                 $currency->fill(
                     CurrencyDto::fromCbr($row)->all()
@@ -70,7 +75,7 @@ class CronCbrRequest extends Command
             }
             event(new CurrencyRatesUpdated($currencies));
         } catch (GuzzleException $e) {
-            \Log::error('CBR Cron HTTP Error:', [
+            Log::error('CBR Cron HTTP Error:', [
                 'message' => $e->getMessage(),
                 'code' => $e->getCode(),
                 'source' => 'cron'

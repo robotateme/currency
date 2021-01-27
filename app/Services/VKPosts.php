@@ -6,10 +6,11 @@ namespace App\Services;
 
 use App\Models\Dto\VkPostDto;
 use App\Services\VKApi\Client as VkApiClient;
+use App\Services\VKApi\Contracts\PostsServiceInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 
-class VKPosts
+class VKPosts implements PostsServiceInterface
 {
     /**
      * @var VkApiClient

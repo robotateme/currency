@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\VKApi\Contracts\PostsServiceInterface;
 use App\Services\VKPosts;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 
 class PostsController extends Controller
 {
-    protected $VKPosts;
+    protected $postsService;
 
-    public function __construct(VKPosts $VKPosts)
+    public function __construct(PostsServiceInterface $postsService)
     {
-        $this->VKPosts = $VKPosts;
+        /** @var VKPosts $postsService */
+        $this->postsService = $postsService;
     }
 
     /**
@@ -22,6 +24,6 @@ class PostsController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->VKPosts->getAll();
+        return $this->postsService->getAll();
     }
 }
